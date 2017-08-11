@@ -48,24 +48,25 @@ void bird_eye() {
 	Mat gray_image;
 	cvtColor(image, gray_image, CV_BGR2GRAY);
 
-	//IplImage* mapx = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1);
-	//IplImage* mapy = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1);
-	Mat map1, map2;
-	
-	initUndistortRectifyMap(intrinsic, distortion, Mat(),
-		//getOptimalNewCameraMatrix(intrinsic, distortion, imageSize, 1, imageSize, 0), 
-		intrinsic,//Changed
-		imageSize, CV_16SC2, map1, map2);
+	for (int i = 0; i < 90; i += 5)
+	{
+		Mat map1, map2;
+		float theta = i * 3.14f / 180.f;
+		Mat R = (Mat_<float>(3,3) << 1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
+		Size newImagSize(240, 480);
+		Mat newCam = (Mat_<float>(3, 3) << newImagSize.width / 2, 0, newImagSize.width / 2, 0, newImagSize.width / 2, newImagSize.height / 2, 0, 0, 1);
+		Mat newImg;
 
-	Mat t = image.clone();
-	//cvRemap(t, image, mapx, mapy);
-	remap(t, image, map1, map2, INTER_LINEAR);
-	//cvNamedWindow("undistort");
-	//cvShowImage("undistort", image);
-	imshow("undistort View", image);
-	cvtColor(image, gray_image, CV_BGR2GRAY);//-----
+		initUndistortRectifyMap(intrinsic, distortion, R.inv(), newCam,
+			newImagSize, CV_16SC2, map1, map2);
 
-	int c = cvWaitKey(-1);
+		remap(image, newImg, map1, map2, INTER_LINEAR);
+		imshow("undistort View", newImg);
+		//cvtColor(image, gray_image, CV_BGR2GRAY);//-----
+
+		int c = waitKey();
+	}
+
 	//CvPoint2D32f* corners = new CvPoint2D32f[board_n];
 	
 	int corner_count = 0;
