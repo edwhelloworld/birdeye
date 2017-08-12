@@ -20,8 +20,6 @@ int main(int argc, char* argv[]) {
 
 	board_w = 9;//9//atoi(argv[1]);
 	board_h = 6;//atoi(argv[2]);
-	n_boards = 1;//atoi(argv[3]);
-
 	bird_eye();
 	return 0;
 }
@@ -30,8 +28,6 @@ void bird_eye() {
 	int board_n = board_w * board_h;
 	Size board_sz = Size(board_w, board_h);
 	Size imageSize;
-	//CvMat *intrinsic = (CvMat*) cvLoad("Intrinsics2.xml");
-	//CvMat *distortion = (CvMat*) cvLoad("Distortion2.xml");
 	Mat intrinsic, distortion;
 	FileStorage fs2("Intrinsics2.xml", FileStorage::READ);
 	fs2["Intrinsics"] >> intrinsic;
@@ -39,8 +35,6 @@ void bird_eye() {
 	FileStorage fs3("Distortion2.xml", FileStorage::READ);
 	fs3["Distortion"] >> distortion;
 	fs3.release();
-	//IplImage* image = cvLoadImage("./Resource/17.jpg", 1);//("./Resource/bird-eye.jpg", 1);
-	//IplImage* gray_image = cvCreateImage(cvGetSize(image), 8, 1);
 	Mat image = imread("./Resource/17.jpg", 1);
 	imshow("org_img", image);
 	imageSize = image.size();
@@ -62,22 +56,12 @@ void bird_eye() {
 
 		remap(image, newImg, map1, map2, INTER_LINEAR);
 		imshow("undistort View", newImg);
-		//cvtColor(image, gray_image, CV_BGR2GRAY);//-----
-
 		int c = waitKey();
 	}
 
-	//CvPoint2D32f* corners = new CvPoint2D32f[board_n];
 	
 	int corner_count = 0;
 	
-	//int found = cvFindChessboardCorners(
-	//		image, 
-	//		board_sz, 
-	//		corners, 
-	//		&corner_count, 
-	//		CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS
-	//);
 	vector<Point2f> corners;
 	bool found = findChessboardCorners(image, board_sz, corners,
 		CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS );//| CV_CALIB_CB_FAST_CHECK| CV_CALIB_CB_NORMALIZE_IMAGE
@@ -87,14 +71,6 @@ void bird_eye() {
 		return;
 	}
 	
-	//cvFindCornerSubPix(
-	//		gray_image, 
-	//		corners, 
-	//		corner_count, 
-	//		cvSize(11, 11), 
-	//		cvSize(-1, -1), 
-	//		cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1)
-	//);
 	cornerSubPix(gray_image, corners, Size(11, 11),
 		Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
 
@@ -135,8 +111,6 @@ void bird_eye() {
 	}
 	Mat imgVtrPtsM;
 	Mat(imgVtrPts).convertTo(imgVtrPtsM, CV_32F);
-
-
 	
 	/*circle(image, cvPointFrom32f(imgVtrPts[0]),9, Scalar(0, 0, 255),3);
 	circle(image, cvPointFrom32f(imgVtrPts[1]), 9, Scalar(0, 255, 0), 3);
@@ -177,6 +151,5 @@ void bird_eye() {
 	//	if(a=='d')z -= 0.5;
 	//	else if(a == 'f')z += 0.5;
 	//}
-
 }
 
