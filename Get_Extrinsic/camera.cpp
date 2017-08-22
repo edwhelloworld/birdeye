@@ -47,14 +47,18 @@ void bird_eye() {
 		Mat map1, map2;
 		float theta = i * 3.14f / 180.f;
 		Mat R = (Mat_<float>(3,3) << 1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
-		Size newImagSize(240, 480);
+		Size newImagSize(640, 480);//(240, 480);
 		Mat newCam = (Mat_<float>(3, 3) << newImagSize.width / 2, 0, newImagSize.width / 2, 0, newImagSize.width / 2, newImagSize.height / 2, 0, 0, 1);
 		Mat newImg;
 
 		initUndistortRectifyMap(intrinsic, distortion, R.inv(), newCam,
 			newImagSize, CV_16SC2, map1, map2);
-
-		remap(image, newImg, map1, map2, INTER_LINEAR);
+		Mat Nmap1, Nmap2;
+		const int startCols = 260;
+		const int startRows = 210;
+		map1(cv::Rect(startCols, startRows, 120, 60)).copyTo(Nmap1);
+		map2(cv::Rect(startCols, startRows, 120, 60)).copyTo(Nmap2);
+		remap(image, newImg, Nmap1, Nmap2, INTER_LINEAR);
 		imshow("undistort View", newImg);
 		int c = waitKey();
 	}
