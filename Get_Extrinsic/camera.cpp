@@ -35,7 +35,7 @@ void bird_eye() {
 	FileStorage fs3("Distortion2.xml", FileStorage::READ);
 	fs3["Distortion"] >> distortion;
 	fs3.release();
-	Mat image = imread("./Resource/17.jpg", 1);
+	Mat image = imread("./Resource/cross.jpg", 1);
 	imshow("org_img", image);
 	imageSize = image.size();
 
@@ -47,17 +47,17 @@ void bird_eye() {
 		Mat map1, map2;
 		float theta = i * 3.14f / 180.f;
 		Mat R = (Mat_<float>(3,3) << 1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
-		Size newImagSize(640, 480);//(240, 480);
+		Size newImagSize(240, 960);
 		Mat newCam = (Mat_<float>(3, 3) << newImagSize.width / 2, 0, newImagSize.width / 2, 0, newImagSize.width / 2, newImagSize.height / 2, 0, 0, 1);
 		Mat newImg;
 
 		initUndistortRectifyMap(intrinsic, distortion, R.inv(), newCam,
 			newImagSize, CV_16SC2, map1, map2);
 		Mat Nmap1, Nmap2;
-		const int startCols = 260;
-		const int startRows = 210;
-		map1(cv::Rect(startCols, startRows, 120, 60)).copyTo(Nmap1);
-		map2(cv::Rect(startCols, startRows, 120, 60)).copyTo(Nmap2);
+		const int startCols = 0;//260;
+		const int startRows = 0;//210;
+		map1(cv::Rect(startCols, startRows, 240, 480)).copyTo(Nmap1);
+		map2(cv::Rect(startCols, startRows, 240, 480)).copyTo(Nmap2);
 		remap(image, newImg, Nmap1, Nmap2, INTER_LINEAR);
 		imshow("undistort View", newImg);
 		int c = waitKey();
@@ -116,10 +116,6 @@ void bird_eye() {
 	Mat imgVtrPtsM;
 	Mat(imgVtrPts).convertTo(imgVtrPtsM, CV_32F);
 	
-	/*circle(image, cvPointFrom32f(imgVtrPts[0]),9, Scalar(0, 0, 255),3);
-	circle(image, cvPointFrom32f(imgVtrPts[1]), 9, Scalar(0, 255, 0), 3);
-	circle(image, cvPointFrom32f(imgVtrPts[2]), 9, Scalar(255, 0, 0), 3);
-	circle(image, cvPointFrom32f(imgVtrPts[3]), 9, Scalar(255, 255, 0), 3);*/
 
 	if (found)  drawChessboardCorners(image, board_sz, Mat(corners), found);//
 
@@ -139,21 +135,6 @@ void bird_eye() {
 	fs.release();
 	imshow("Chessboard", image);
 	waitKey();
-	////CvMat *H = cvCreateMat(3, 3, CV_32F);
-	////cvGetPerspectiveTransform(objPts, imgPts, H);
-	//Mat H;
-	//H = getPerspectiveTransform((objPts), (imgPts));//(objPts, imgPts);
-	//float z = 10;
-	//int key = waitKey();
-	//Mat birds_image= image.clone();
-	//int a=0;
-	//while (a != 27) {
-	//	H.at<double>(2, 2) = z;
-	//	warpPerspective(image, birds_image, H, image.size(), WARP_INVERSE_MAP+ INTER_LINEAR + WARP_FILL_OUTLIERS);//
-	//	imshow("birds_image", birds_image);
-	//	a=waitKey();
-	//	if(a=='d')z -= 0.5;
-	//	else if(a == 'f')z += 0.5;
-	//}
+	
 }
 
