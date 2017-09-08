@@ -1,10 +1,13 @@
-﻿cl : 命令行 warning D9028: 最小重新生成失败，正在转换为标准生成
-  camera.cpp
+﻿  camera.cpp
 d:\opencv3.2\build\include\opencv2\core\mat.hpp(2586): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 d:\opencv3.2\build\include\opencv2\core\persistence.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 d:\opencv3.2\build\include\opencv2\core\utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 d:\opencv3.2\build\include\opencv2\core\utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 d:\opencv3.2\build\include\opencv2\imgproc.hpp(592): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-d:\github\get_extrinsic\get_extrinsic\camera.cpp(103): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(71): warning C4305: “参数”: 从“double”到“float”截断
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(72): warning C4305: “参数”: 从“double”到“float”截断
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(73): warning C4305: “参数”: 从“double”到“float”截断
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(74): warning C4305: “参数”: 从“double”到“float”截断
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(145): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
   Get_Extrinsic.vcxproj -> D:\GitHub\get_Extrinsic\x64\Debug\Get_Extrinsic.exe
   Get_Extrinsic.vcxproj -> D:\GitHub\get_Extrinsic\x64\Debug\Get_Extrinsic.pdb (Full PDB)

@@ -29,37 +29,79 @@ void bird_eye() {
 	Size board_sz = Size(board_w, board_h);
 	Size imageSize;
 	Mat intrinsic, distortion;
-	FileStorage fs2("Intrinsics2.xml", FileStorage::READ);
-	fs2["Intrinsics"] >> intrinsic;
-	fs2.release();
-	FileStorage fs3("Distortion2.xml", FileStorage::READ);
-	fs3["Distortion"] >> distortion;
-	fs3.release();
+	//FileStorage fs2("Intrinsics2.xml", FileStorage::READ);
+	//fs2["Intrinsics"] >> intrinsic;
+	//fs2.release();
+	//FileStorage fs3("Distortion2.xml", FileStorage::READ);
+	//fs3["Distortion"] >> distortion;
+	//fs3.release();
+	FileStorage fs1("cameraParam.xml", FileStorage::READ);
+	fs1["camera_matrix"] >> intrinsic;
+	fs1["distortion_coefficients"] >> distortion;
 	Mat image = imread("./Resource/cross.jpg", 1);
 	imshow("org_img", image);
 	imageSize = image.size();
-
+	Mat mapx, mapy;
 	Mat gray_image;
-	cvtColor(image, gray_image, CV_BGR2GRAY);
+	
+	initUndistortRectifyMap(intrinsic, distortion, Mat(),
+		getOptimalNewCameraMatrix(intrinsic, distortion, imageSize, 1, imageSize, 0),
+		imageSize, CV_16SC2, mapx, mapy);
+	remap(image, gray_image, mapx, mapy, INTER_LINEAR);
 
+	cvtColor(gray_image, gray_image, CV_BGR2GRAY);
+	imshow("undistort_img", gray_image);
 	for (int i = 0; i < 90; i += 5)
 	{
 		Mat map1, map2;
 		float theta = i * 3.14f / 180.f;
-		Mat R = (Mat_<float>(3,3) << 1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
-		Size newImagSize(240, 960);
-		Mat newCam = (Mat_<float>(3, 3) << newImagSize.width / 2, 0, newImagSize.width / 2, 0, newImagSize.width / 2, newImagSize.height / 2, 0, 0, 1);
-		Mat newImg;
+		Mat R = (Mat_<float>(3, 3) <<1, 0, 0, 0, 6.8253325706286228e-01, 7.3045479133977231e-01, 0, -7.2855051949300931e-01, 6.8263323837651402e-01);
+		//9.9809310526524031e-01, 5.7987011904622368e-02,-2.1157969476367177e-02, -2.4169212066805296e-02,6.8253325706286228e-01, 7.3045479133977231e-01, 5.6797908500749339e-02,-7.2855051949300931e-01, 6.8263323837651402e-01);
+		//1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
+		Mat R1 = Mat::eye(3, 3, CV_32F);
+		const int newImgW = 240;
+		const int newImgH = 480;
+		Size newImagSize(newImgW, newImgH);
+		//Mat newCam = (Mat_<float>(3, 3) << newImagSize.width / 2, 0, newImagSize.width / 2, 0, newImagSize.width / 2, newImagSize.height / 2, 0, 0, 1);
+		Mat newCam = (Mat_<float>(3, 3) << newImagSize.height *0.072, 0, (newImagSize.width) / 2, 0, newImagSize.height *0.072,(newImagSize.height) / 2, 0, 0, 1);
+		
+		vector<Point3f> objVtrPts;
+		vector<Point2f> imgPts;
+		Mat objVtrPtsM;
+		objVtrPts.push_back(Point3f(-1, -2.2, 0));    //三维坐标的单位是毫米
+		objVtrPts.push_back(Point3f(1, -2.2, 0));
+		objVtrPts.push_back(Point3f(-1, -0.2, 0));
+		objVtrPts.push_back(Point3f(1,-0.2, 0));
 
+		Mat t = (Mat_<float>(3, 1) << 0, 0.2,0.32);//point in world coordinate + t =point in cam coordinate
+		Mat r;
+		Rodrigues(R1.inv(), r);
+		Mat d = (Mat_<float>(4, 1) << 0,0,0,0);
+		projectPoints(objVtrPts, r, t, newCam, d, imgPts);
+		
+		Mat newImg, roiImg;
 		initUndistortRectifyMap(intrinsic, distortion, R.inv(), newCam,
 			newImagSize, CV_16SC2, map1, map2);
 		Mat Nmap1, Nmap2;
-		const int startCols = 0;//260;
-		const int startRows = 0;//210;
-		map1(cv::Rect(startCols, startRows, 240, 480)).copyTo(Nmap1);
-		map2(cv::Rect(startCols, startRows, 240, 480)).copyTo(Nmap2);
-		remap(image, newImg, Nmap1, Nmap2, INTER_LINEAR);
+		
+		int width = 240;
+		int height = 480;
+		//int startCols;//260;
+		//int startRows;//210;
+		//startCols = (newImgW - width) / 2;
+		//startRows = 0;//(newImgH - height) / 2;
+		map1(cv::Rect(imgPts[0], imgPts[3])).copyTo(Nmap1);
+		map2(cv::Rect(imgPts[0], imgPts[3])).copyTo(Nmap2);
+
+		remap(image, roiImg, Nmap1, Nmap2, INTER_LINEAR);
+		remap(image, newImg, map1, map2, INTER_LINEAR);
+		for (int i = 0; i < 4; i++)
+		{
+			circle(newImg, imgPts[i], 3, Scalar(0, 0, 255), -1, 8);
+			std::cout << "Image point: " << imgPts[i] << std::endl;
+		}
 		imshow("undistort View", newImg);
+		imshow("roi View", roiImg);
 		int c = waitKey();
 	}
 
