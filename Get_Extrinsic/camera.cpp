@@ -39,7 +39,6 @@ void bird_eye() {
 	Mat image = imread("./Resource/cross.png", 1);
 	imshow("org_img", image);
 	imageSize = image.size();
-<<<<<<< HEAD
 	Mat mapx, mapy;
 	Mat gray_image, undistort_img;
 	
@@ -98,32 +97,6 @@ void bird_eye() {
 	//reszImg.copyTo(tempImg(Rect(Start_Line, Start_Col, Width, Height)));
 	//imshow("reszimg", reszImg);
 	//imshow("tempImg", tempImg);
-=======
-
-	Mat gray_image;
-	cvtColor(image, gray_image, CV_BGR2GRAY);
-
-	for (int i = 0; i < 90; i += 5)
-	{
-		Mat map1, map2;
-		float theta = i * 3.14f / 180.f;
-		Mat R = (Mat_<float>(3,3) << 1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
-		Size newImagSize(240, 480);
-		Mat newCam = (Mat_<float>(3, 3) << newImagSize.width / 2, 0, newImagSize.width / 2, 0, newImagSize.width / 2, newImagSize.height / 2, 0, 0, 1);
-		Mat newImg;
-
-		initUndistortRectifyMap(intrinsic, distortion, R.inv(), newCam,
-			newImagSize, CV_16SC2, map1, map2);
-
-		remap(image, newImg, map1, map2, INTER_LINEAR);
-		imshow("undistort View", newImg);
-		//cvtColor(image, gray_image, CV_BGR2GRAY);//-----
-
-		int c = waitKey();
-	}
-
-	//CvPoint2D32f* corners = new CvPoint2D32f[board_n];
->>>>>>> e952998b4ebb7c045d6fc0b57f85dda900715911
 	
 //======================================================================================================
 	for (int i = 0; i < 90; i += 5)
