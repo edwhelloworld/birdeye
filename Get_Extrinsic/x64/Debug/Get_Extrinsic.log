@@ -11,5 +11,6 @@ d:\github\get_extrinsic\get_extrinsic\camera.cpp(122): warning C4305: “参数�
 d:\github\get_extrinsic\get_extrinsic\camera.cpp(149): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
 d:\github\get_extrinsic\get_extrinsic\camera.cpp(150): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
 d:\github\get_extrinsic\get_extrinsic\camera.cpp(189): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
+  LINK : 没有找到 D:\GitHub\get_Extrinsic\x64\Debug\Get_Extrinsic.exe 或上一个增量链接没有生成它；正在执行完全链接
   Get_Extrinsic.vcxproj -> D:\GitHub\get_Extrinsic\x64\Debug\Get_Extrinsic.exe
   Get_Extrinsic.vcxproj -> D:\GitHub\get_Extrinsic\x64\Debug\Get_Extrinsic.pdb (Full PDB)

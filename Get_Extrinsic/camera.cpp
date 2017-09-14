@@ -143,13 +143,13 @@ void bird_eye() {
 		Mat traversal_img(height, width, gray_image.type(), Scalar(0, 0));// Scalar(0, 0)
 		//int gray_imageTP = CompressImg.type();
 		//cout << gray_imageTP << endl;
-		for(int i=0;i<width;i++)
-			for (int j = 0; j < height; j++)
+		for(int i=0;i<height;i++)
+			for (int j = 0; j <width ; j++)
 			{
-				int x = (map1.at<float>(j, i) - 100.5) / ((float)JumpCol);//int x= (int)(Start_Col + JumpCol*map1.at<float>(j,i) + 0.5);
-				int y= (map2.at<float>(j, i)-85.5)/ ((float)JumpLine);//int y= (int)(Start_Line + JumpLine*map2.at<float>(j, i) + 0.5);
+				int x = (map1.at<float>(i, j) - 100.5) / ((float)JumpCol);//int x= (int)(Start_Col + JumpCol*map1.at<float>(j,i) + 0.5);
+				int y= (map2.at<float>(i, j)-85.5)/ ((float)JumpLine);//int y= (int)(Start_Line + JumpLine*map2.at<float>(j, i) + 0.5);
 				if(x<CompressImg.cols&&x>=0&&y<CompressImg.rows&&y>=0)
-					traversal_img.at<uchar>(j, i) = CompressImg.at<uchar>(y, x);
+					traversal_img.at<uchar>(i, j) = CompressImg.at<uchar>(y, x);
 			}
 		imshow("traversal_img View", traversal_img);
 		remap(gray_image, roiImg, Nmap1, Nmap2, INTER_NEAREST); //INTER_LINEAR);
