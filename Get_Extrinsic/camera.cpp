@@ -33,10 +33,13 @@ void bird_eye() {
 	Size board_sz = Size(board_w, board_h);
 	Size imageSize;
 	Mat intrinsic, distortion;
-	FileStorage fs1("cameraParam.xml", FileStorage::READ);
+	FileStorage fs1("cameraParam1.xml", FileStorage::READ);
 	fs1["camera_matrix"] >> intrinsic;
 	fs1["distortion_coefficients"] >> distortion;
-	Mat image = imread("./Resource/cross.png", 1);
+	Mat image = imread("./Resource/cross11.png", 1);
+	//Mat imgDst;
+	//resize(image, imgDst, Size(640, 480));
+	//imwrite("cross11.png", imgDst);
 	imshow("org_img", image);
 	imageSize = image.size();
 	Mat mapx, mapy;
@@ -49,7 +52,7 @@ void bird_eye() {
 	//image.copyTo(gray_image);
 	cvtColor(image, gray_image, CV_BGR2GRAY);
 
-	//imshow("undistort_img", undistort_img);
+	imshow("undistort_img", undistort_img);
 //============================================================================================================
 	//Mat CompressImg, sectImg;
 	float JumpLine;
@@ -104,9 +107,9 @@ void bird_eye() {
 		Mat map1, map2;
 		int i = 50;//cout << i << endl;
 		float theta = i * 3.14f / 180.f;
-		Mat R = (Mat_<float>(3, 3) <<//1, 0, 0, 0, 6.8253325706286228e-01, 7.3045479133977231e-01, 0, -7.2855051949300931e-01, 6.8263323837651402e-01);
+		Mat R = (Mat_<float>(3, 3) <<1, 0, 0, 0, 6.8253325706286228e-01, 7.3045479133977231e-01, 0, -7.2855051949300931e-01, 6.8263323837651402e-01);
 		//9.9809310526524031e-01, 5.7987011904622368e-02,-2.1157969476367177e-02, -2.4169212066805296e-02,6.8253325706286228e-01, 7.3045479133977231e-01, 5.6797908500749339e-02,-7.2855051949300931e-01, 6.8263323837651402e-01);
-		1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
+		//1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
 		Mat R1 = Mat::eye(3, 3, CV_32F);
 		const int newImgW = 240;//240;
 		const int newImgH = 320;//480;
@@ -117,8 +120,8 @@ void bird_eye() {
 		vector<Point3f> objVtrPts;
 		vector<Point2f> imgPts;
 		Mat objVtrPtsM;
-		objVtrPts.push_back(Point3f(-1.0, -1.5, 0));    //三维坐标的单位是米
-		objVtrPts.push_back(Point3f(1.0, -1.5, 0));
+		objVtrPts.push_back(Point3f(-1.0, -1.8, 0));    //三维坐标的单位是米
+		objVtrPts.push_back(Point3f(1.0, -1.8, 0));
 		objVtrPts.push_back(Point3f(-1.0, -0.3, 0));
 		objVtrPts.push_back(Point3f(1.0,-0.3, 0));
 
@@ -156,7 +159,7 @@ void bird_eye() {
 		remap(gray_image, newImg, map1, map2, INTER_NEAREST);// INTER_LINEAR);
 		for (int i = 0; i < 4; i++)
 		{
-			circle(newImg, imgPts[i], 3, Scalar(0, 0, 255), -1, 8);
+	//		circle(newImg, imgPts[i], 3, Scalar(0, 0, 255), -1, 8);
 			std::cout << "Image point: " << imgPts[i] << std::endl;
 		}
 		imshow("bird View", newImg);
