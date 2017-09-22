@@ -23,8 +23,8 @@ void getExtrinsic(Mat image, Mat gray_image, Size board_sz, Mat intrinsic, Mat d
 #define   End_Col             (540)         //520 640-Start_Col
 #define   Width               (End_Col-Start_Col)
 #define   Height              (End_Line-Start_Line)
-int main(int argc, char* argv[]) {
 
+int main(int argc, char* argv[]) {
 	board_w = 9;//9//atoi(argv[1]);
 	board_h = 6;//atoi(argv[2]);
 	bird_eye();
