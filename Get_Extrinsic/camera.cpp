@@ -8,13 +8,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+//#include <iomanip> 
 using namespace std;
 using namespace cv;
 int n_boards = 0;
 int board_w;
 int board_h;
-
 void bird_eye();
+void getExtrinsic(Mat image, Mat gray_image, Size board_sz, Mat intrinsic, Mat distortion);
+
 #define   Start_Line          (85)         //220 85  232 72
 #define   End_Line            (269)        //405 269 415 255
 #define   Start_Col           (100)         //120
@@ -36,10 +38,7 @@ void bird_eye() {
 	FileStorage fs1("cameraParam1.xml", FileStorage::READ);
 	fs1["camera_matrix"] >> intrinsic;
 	fs1["distortion_coefficients"] >> distortion;
-	Mat image = imread("./Resource/cross11.png", 1);
-	//Mat imgDst;
-	//resize(image, imgDst, Size(640, 480));
-	//imwrite("cross11.png", imgDst);
+	Mat image = imread("./Resource/cross15.png", 1);
 	imshow("org_img", image);
 	imageSize = image.size();
 	Mat mapx, mapy;
@@ -49,10 +48,11 @@ void bird_eye() {
 		getOptimalNewCameraMatrix(intrinsic, distortion, imageSize, 1, imageSize, 0),
 		imageSize, CV_16SC2, mapx, mapy);
 	remap(image, undistort_img, mapx, mapy, INTER_LINEAR);
-	//image.copyTo(gray_image);
 	cvtColor(image, gray_image, CV_BGR2GRAY);
 
 	imshow("undistort_img", undistort_img);
+	//waitKey();
+	//getExtrinsic(image,gray_image,board_sz,intrinsic,distortion);
 //============================================================================================================
 	//Mat CompressImg, sectImg;
 	float JumpLine;
@@ -107,9 +107,12 @@ void bird_eye() {
 		Mat map1, map2;
 		int i = 50;//cout << i << endl;
 		float theta = i * 3.14f / 180.f;
-		Mat R = (Mat_<float>(3, 3) <<1, 0, 0, 0, 6.8253325706286228e-01, 7.3045479133977231e-01, 0, -7.2855051949300931e-01, 6.8263323837651402e-01);
+		Mat R = (Mat_<float>(3, 3) <<//1, 0, 0, 0, 6.8253325706286228e-01, 7.3045479133977231e-01, 0, -7.2855051949300931e-01, 6.8263323837651402e-01);
+			1, 0, 0, 0, 6.3125021491044331e-01, 7.7557442403052723e-01, 0, -7.7504050264613167e-01, 6.3093921109739193e-01);
 		//9.9809310526524031e-01, 5.7987011904622368e-02,-2.1157969476367177e-02, -2.4169212066805296e-02,6.8253325706286228e-01, 7.3045479133977231e-01, 5.6797908500749339e-02,-7.2855051949300931e-01, 6.8263323837651402e-01);
-		//1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
+		//9.9938210404075822e-01, 2.8903035023168183e-02, -2.0000617228391221e-02, -2.7347696859128055e-03, 6.3125021491044331e-01, 7.7557442403052723e-01, 3.5041848664591292e-02, -7.7504050264613167e-01, 6.3093921109739193e-01);
+		//	1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
+		//cout << cos(theta) << endl << sin(theta) << endl << -sin(theta) << endl << cos(theta) << endl;
 		Mat R1 = Mat::eye(3, 3, CV_32F);
 		const int newImgW = 240;//240;
 		const int newImgH = 320;//480;
@@ -120,8 +123,8 @@ void bird_eye() {
 		vector<Point3f> objVtrPts;
 		vector<Point2f> imgPts;
 		Mat objVtrPtsM;
-		objVtrPts.push_back(Point3f(-1.0, -1.8, 0));    //三维坐标的单位是米
-		objVtrPts.push_back(Point3f(1.0, -1.8, 0));
+		objVtrPts.push_back(Point3f(-1.0, -1.5, 0));    //三维坐标的单位是米
+		objVtrPts.push_back(Point3f(1.0, -1.5, 0));
 		objVtrPts.push_back(Point3f(-1.0, -0.3, 0));
 		objVtrPts.push_back(Point3f(1.0,-0.3, 0));
 
@@ -166,26 +169,27 @@ void bird_eye() {
 		imshow("roi View", roiImg);
 		int c = waitKey();
 	}
-
-//===================================================================================================================	
+}
+void getExtrinsic(Mat image,Mat gray_image,Size board_sz,Mat intrinsic,Mat distortion)
+{
 	int corner_count = 0;
-	
+
 	vector<Point2f> corners;
 	bool found = findChessboardCorners(image, board_sz, corners,
-		CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS );//| CV_CALIB_CB_FAST_CHECK| CV_CALIB_CB_NORMALIZE_IMAGE
-	
-	if(!found){
+		CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);//| CV_CALIB_CB_FAST_CHECK| CV_CALIB_CB_NORMALIZE_IMAGE
+
+	if (!found) {
 		printf("couldn't aquire chessboard!\n");
 		return;
 	}
-	
+
 	cornerSubPix(gray_image, corners, Size(11, 11),
 		Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
 
-	
+
 	vector<Point3f> objVtrPts;
 	Mat objVtrPtsM;
-	for (int i=0; i < board_h*board_w; i++)
+	for (int i = 0; i < board_h*board_w; i++)
 	{
 		int x = i % 9;
 		int y = i / 9;
@@ -197,11 +201,11 @@ void bird_eye() {
 
 	for (int i = 0; i < board_h*board_w; i++)
 	{
-		imgVtrPts.push_back(Point2f(corners[board_h*board_w-1-i]));
+		imgVtrPts.push_back(Point2f(corners[board_h*board_w - 1 - i]));
 	}
 	Mat imgVtrPtsM;
 	Mat(imgVtrPts).convertTo(imgVtrPtsM, CV_32F);
-	
+
 
 	if (found)  drawChessboardCorners(image, board_sz, Mat(corners), found);//
 
@@ -210,7 +214,7 @@ void bird_eye() {
 	double rm[9];
 	Mat rotM(3, 3, CV_64FC1, rm);
 	Rodrigues(rotM, rvec);
-	solvePnP(objVtrPtsM,Mat(imgVtrPtsM), intrinsic, distortion, rvec, tvec);
+	solvePnP(objVtrPtsM, Mat(imgVtrPtsM), intrinsic, distortion, rvec, tvec);
 	Rodrigues(rvec, rotM);
 
 	cout << "rotation_matrix: " << endl << rotM << endl;
@@ -221,6 +225,4 @@ void bird_eye() {
 	fs.release();
 	imshow("Chessboard", image);
 	waitKey();
-	
 }
-
