@@ -105,13 +105,13 @@ void bird_eye() {
 	//for (int i = 0; i < 90; i += 5)
 	{
 		Mat map1, map2;
-		int i = 50;//cout << i << endl;
+		int i =45;//cout << i << endl;
 		float theta = i * 3.14f / 180.f;
 		Mat R = (Mat_<float>(3, 3) <<//1, 0, 0, 0, 6.8253325706286228e-01, 7.3045479133977231e-01, 0, -7.2855051949300931e-01, 6.8263323837651402e-01);
-			1, 0, 0, 0, 6.3125021491044331e-01, 7.7557442403052723e-01, 0, -7.7504050264613167e-01, 6.3093921109739193e-01);
+		//1, 0, 0, 0, 6.3125021491044331e-01, 7.7557442403052723e-01, 0, -7.7504050264613167e-01, 6.3093921109739193e-01);
 		//9.9809310526524031e-01, 5.7987011904622368e-02,-2.1157969476367177e-02, -2.4169212066805296e-02,6.8253325706286228e-01, 7.3045479133977231e-01, 5.6797908500749339e-02,-7.2855051949300931e-01, 6.8263323837651402e-01);
 		//9.9938210404075822e-01, 2.8903035023168183e-02, -2.0000617228391221e-02, -2.7347696859128055e-03, 6.3125021491044331e-01, 7.7557442403052723e-01, 3.5041848664591292e-02, -7.7504050264613167e-01, 6.3093921109739193e-01);
-		//	1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
+			1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
 		//cout << cos(theta) << endl << sin(theta) << endl << -sin(theta) << endl << cos(theta) << endl;
 		Mat R1 = Mat::eye(3, 3, CV_32F);
 		const int newImgW = 240;//240;
@@ -123,12 +123,12 @@ void bird_eye() {
 		vector<Point3f> objVtrPts;
 		vector<Point2f> imgPts;
 		Mat objVtrPtsM;
-		objVtrPts.push_back(Point3f(-1.0, -1.5, 0));    //三维坐标的单位是米
-		objVtrPts.push_back(Point3f(1.0, -1.5, 0));
+		objVtrPts.push_back(Point3f(-1.0, -1.8, 0));    //三维坐标的单位是米
+		objVtrPts.push_back(Point3f(1.0, -1.8, 0));
 		objVtrPts.push_back(Point3f(-1.0, -0.3, 0));
 		objVtrPts.push_back(Point3f(1.0,-0.3, 0));
 
-		Mat t = (Mat_<float>(3, 1) << 0, 0.3,0.32);//point in world coordinate + t = point in cam coordinate
+		Mat t = (Mat_<float>(3, 1) << 0, 0,0.32);//point in world coordinate + t = point in cam coordinate
 		Mat r;
 		Rodrigues(R1.inv(), r);
 		Mat d = (Mat_<float>(4, 1) << 0,0,0,0);

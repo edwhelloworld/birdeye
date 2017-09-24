@@ -1,2 +1,15 @@
-﻿  Get_Extrinsic.vcxproj -> D:\GitHub\get_Extrinsic\x64\Debug\Get_Extrinsic.exe
+﻿  camera.cpp
+d:\opencv3.2\build\include\opencv2\core\mat.hpp(2586): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+d:\opencv3.2\build\include\opencv2\core\persistence.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+d:\opencv3.2\build\include\opencv2\core\utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+d:\opencv3.2\build\include\opencv2\core\utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+d:\opencv3.2\build\include\opencv2\imgproc.hpp(592): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(126): warning C4305: “参数”: 从“double”到“float”截断
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(127): warning C4305: “参数”: 从“double”到“float”截断
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(128): warning C4305: “参数”: 从“double”到“float”截断
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(129): warning C4305: “参数”: 从“double”到“float”截断
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(155): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(156): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+d:\github\get_extrinsic\get_extrinsic\camera.cpp(196): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
+  Get_Extrinsic.vcxproj -> D:\GitHub\get_Extrinsic\x64\Debug\Get_Extrinsic.exe
   Get_Extrinsic.vcxproj -> D:\GitHub\get_Extrinsic\x64\Debug\Get_Extrinsic.pdb (Full PDB)
