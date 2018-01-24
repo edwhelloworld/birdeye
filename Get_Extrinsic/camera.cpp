@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
 //#include <iomanip> 
 using namespace std;
 using namespace cv;
@@ -17,17 +18,17 @@ int board_h;
 void bird_eye();
 void getExtrinsic(Mat image, Mat gray_image, Size board_sz, Mat intrinsic, Mat distortion);
 
-#define   Start_Line          (85)         //220 85  232 72
-#define   End_Line            (269)        //405 269 415 255
+#define   Start_Line          (50)         //85 220 85  232 72
+#define   End_Line            (238)        //269 405 269 415 255
 #define   Start_Col           (100)         //120
 #define   End_Col             (540)         //520 640-Start_Col
 #define   Width               (End_Col-Start_Col)
 #define   Height              (End_Line-Start_Line)
-#define   ROI_WIDTH				1.6
-#define   ROI_FAR				1.2
-#define   ROI_NEAR				0.3
+#define   ROI_WIDTH			    1.8//1.8
+#define   ROI_FAR				1.2//1.3
+#define   ROI_NEAR				0.3//0.3
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]){
 	board_w = 9;//9//atoi(argv[1]);
 	board_h = 6;//atoi(argv[2]);
 	bird_eye();
@@ -108,22 +109,22 @@ void bird_eye() {
 	//for (int i = 0; i < 90; i += 5)
 	{
 		Mat map1, map2;
-		int i =45;//cout << i << endl;
+	//	int i =60;//cout << i << endl;
 		float theta = i * 3.14f / 180.f;
 		Mat R = (Mat_<float>(3, 3) <<//1, 0, 0, 0, 6.8253325706286228e-01, 7.3045479133977231e-01, 0, -7.2855051949300931e-01, 6.8263323837651402e-01);
 		//1, 0, 0, 0, 6.3125021491044331e-01, 7.7557442403052723e-01, 0, -7.7504050264613167e-01, 6.3093921109739193e-01);
 		//9.9809310526524031e-01, 5.7987011904622368e-02,-2.1157969476367177e-02, -2.4169212066805296e-02,6.8253325706286228e-01, 7.3045479133977231e-01, 5.6797908500749339e-02,-7.2855051949300931e-01, 6.8263323837651402e-01);
 		//9.9938210404075822e-01, 2.8903035023168183e-02, -2.0000617228391221e-02, -2.7347696859128055e-03, 6.3125021491044331e-01, 7.7557442403052723e-01, 3.5041848664591292e-02, -7.7504050264613167e-01, 6.3093921109739193e-01);
 
-		9.9920780458352076e-01 ,3.5011061901835436e-02,
+			9.9920780458352076e-01 ,3.5011061901835436e-02,
 			- 1.8920592059619358e-02 ,- 7.6984161904875802e-03
 			,6.3650121507809687e-01 ,7.7123727710236112e-01 ,3.9044815885578496e-02,
 			-7.7048064787417736e-01, 6.3626651145871971e-01);
-		//1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
+	//	1, 0, 0, 0, cos(theta), sin(theta), 0, -sin(theta), cos(theta)) ;
 		//cout << cos(theta) << endl << sin(theta) << endl << -sin(theta) << endl << cos(theta) << endl;
 		Mat R1 = Mat::eye(3, 3, CV_32F);
-		const int newImgW = 240 * 3;//240;
-		const int newImgH = 320 * 3;//480;
+		const int newImgW = 180 ;//240;
+		const int newImgH = 215;//193 ;//320;
 		Size newImagSize(newImgW, newImgH);
 		//Mat newCam = (Mat_<float>(3, 3) << newImagSize.width / 2, 0, newImagSize.width / 2, 0, newImagSize.width / 2, newImagSize.height / 2, 0, 0, 1);
 		Mat newCam = (Mat_<float>(3, 3) << newImagSize.height *0.1, 0, (newImagSize.width) / 2, 0, newImagSize.height *0.1,(newImagSize.height) / 2, 0, 0, 1);
@@ -143,7 +144,8 @@ void bird_eye() {
 		projectPoints(objVtrPts, r, t, newCam, d, imgPts);
 		
 		Mat newImg, roiImg;
-		initUndistortRectifyMap(intrinsic, distortion, R.inv(), newCam,
+		initUndistortRectifyMap(intrinsic, distortion, R.inv(), 
+			newCam,
 			newImagSize, CV_32FC1, map1, map2);//CV_16SC2
 		Mat Nmap1, Nmap2;
 		
@@ -156,18 +158,25 @@ void bird_eye() {
 		//int gray_imageTP = CompressImg.type();//cout << gray_imageTP << endl;
 		int Nwidth = Nmap1.cols;
 		int Nheight= Nmap1.rows;
+	//	Mat Nimap1 = Nmap1.inv();
+	//	Mat Nimap2 = Nmap2.inv();
 		Mat traversal_img(Nheight, Nwidth, gray_image.type(), Scalar(0, 0));// Scalar(0, 0)
-		for(int i=0;i<Nheight;i++)//.at<>(row,col)
-			for (int j = 0; j <Nwidth; j++)
+		ofstream out("out10.12.txt");
+		for (int i = 0; i<Nheight; i++)//.at<>(row,col) Nmap1（二维矩阵）中对应x轴映射关系 Nmap2 对应y轴 新图点（i，j） 由原图点（y，x）得到
+			for (int j = 0; j <Nwidth; j++)	
 			{
 				int x = (Nmap1.at<float>(i, j) - 100-0.5) / ((float)JumpCol);//int x= (int)(Start_Col + JumpCol*map1.at<float>(j,i) + 0.5);
 				int y= (Nmap2.at<float>(i, j) - 85-0.5)/ ((float)JumpLine);//int y= (int)(Start_Line + JumpLine*map2.at<float>(j, i) + 0.5);
 				if(x<CompressImg.cols&&x>=0&&y<CompressImg.rows&&y>=0)
 					traversal_img.at<uchar>(i, j) = CompressImg.at<uchar>(y, x);
+				out << '{' << x << ',' << y << '}' << ',';
 			}
+
 		imshow("traversal_img View", traversal_img);
-		remap(gray_image, roiImg, Nmap1, Nmap2, INTER_NEAREST); //INTER_LINEAR);
-		remap(gray_image, newImg, map1, map2, INTER_NEAREST);// INTER_LINEAR);
+		//cout << Nmap1 << endl;
+		std::cout << Nwidth << endl << Nheight << endl;
+		remap(gray_image, roiImg, Nmap1, Nmap2, INTER_NEAREST);   //INTER_LINEAR);
+		remap(gray_image, newImg, map1, map2, INTER_NEAREST);     // INTER_LINEAR);
 		for (int i = 0; i < 4; i++)
 		{
 	//		circle(newImg, imgPts[i], 3, Scalar(0, 0, 255), -1, 8);
@@ -215,7 +224,7 @@ void getExtrinsic(Mat image,Mat gray_image,Size board_sz,Mat intrinsic,Mat disto
 	Mat(imgVtrPts).convertTo(imgVtrPtsM, CV_32F);
 
 
-	if (found)  drawChessboardCorners(image, board_sz, Mat(corners), found);//
+	if(found)  drawChessboardCorners(image, board_sz, Mat(corners), found);//
 
 	vector<double> rv(3), tv(3);
 	Mat rvec(rv), tvec(tv);
